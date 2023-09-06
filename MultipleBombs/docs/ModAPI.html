@@ -71,15 +71,42 @@
                 </tr>
             </table>
             <h3>Examples</h3>
-            <p>Example of a script using the API:
-                <pre><code class="cs"><span class="comment">//Example method that uses the API to get the current maximum number of bombs</span>
+            <p>Here's an example script using the API to get the current maximum number of bombs.
+                <pre><code class="cs"><span class="comment">//Example method that uses the Multiple Bombs API to get the current maximum number of bombs</span>
 <span class="keyword">public int</span> GetCurrentMaximumBombs()
 {
+    <span class="comment">//Get the Multiple Bombs API</span>
     <span class="class">GameObject</span> multipleBombsAPIGameObject = <span class="class">GameObject</span>.Find(<span class="string">"MultipleBombs_Info"</span>);
     <span class="keyword">if</span>(multipleBombsAPIGameObject == <span class="keyword">null</span>) <span class="comment">//If the Multiple Bombs mod is not installed</span>
         <span class="keyword">return</span> 1;
     <span class="interface">IDictionary</span>&lt;<span class="keyword">string</span>, <span class="keyword">object</span>&gt; multipleBombsAPI = multipleBombsAPIGameObject.GetComponent&lt;<span class="interface">IDictionary</span>&lt;<span class="keyword">string</span>, <span class="keyword">object</span>&gt;&gt;();
+
     <span class="keyword">return</span> (<span class="keyword">int</span>)multipleBombsAPI[<span class="string">"CurrentMaximumBombCount"</span>];
+}</code></pre>
+            </p>
+            <p>
+                In the following example instead, the code gets bomb info, specifically the serial number, about the first bomb it finds.
+                <pre><code class="cs"><span class="comment">//Example method that uses the Multiple Bombs API to get info about the first available bomb</span>
+<span class="keyword">public string</span> GetFirstBombSerialNumber()
+{
+    <span class="comment">//Get the Multiple Bombs API</span>
+    <span class="class">GameObject</span> multipleBombsAPIGameObject = <span class="class">GameObject</span>.Find(<span class="string">"MultipleBombs_Info"</span>);
+    <span class="keyword">if</span>(multipleBombsAPIGameObject == <span class="keyword">null</span>) <span class="comment">//If the Multiple Bombs mod is not installed</span>
+        <span class="keyword">return null</span>;
+    <span class="interface">IDictionary</span>&lt;<span class="keyword">string</span>, <span class="keyword">object</span>&gt; multipleBombsAPI = multipleBombsAPIGameObject.GetComponent&lt;<span class="interface">IDictionary</span>&lt;<span class="keyword">string</span>, <span class="keyword">object</span>&gt;&gt;();
+
+    <span class="comment">//Get the API function that returns bomb info about a bomb</span>
+    <span class="class">Func</span>&lt;<span class="class">KMBomb</span>, <span class="keyword">KMBombInfo</span>&gt; getBombInfoForBomb = (<span class="class">Func</span>&lt;<span class="class">KMBomb</span>, <span class="keyword">KMBombInfo</span>&gt;)multipleBombsAPI[<span class="string">"GetBombInfoForBomb"</span>];
+
+    <span class="comment">//Get the first bomb</span>
+    <span class="class">KMBomb</span> bomb = FindObjectOfType&lt;<span class="class">KMBomb</span>&gt;();
+    <span class="keyword">if</span>(bomb == <span class="keyword">null</span>)
+        <span class="keyword">return null</span>;
+
+    <span class="comment">//Get the bomb info for the first bomb</span>
+    <span class="class">KMBombInfo</span> bombInfo = getBombInfoForBomb(bomb);
+
+    <span class="keyword">return</span> bombInfo.QueryWidgets(<span class="class">KMBombInfo</span>.QUERYKEY_GET_SERIAL_NUMBER, <span class="keyword">null</span>)[0];
 }</code></pre>
             </p>
         </div>
